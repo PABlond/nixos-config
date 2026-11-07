@@ -1,0 +1,16 @@
+# Liens de sortie laissés par nix-build / nixos-rebuild build
+result
+result-*
+
+# direnv
+.direnv/
+
+# éditeurs
+*.swp
+*~
+.vscode/
+
+# jamais de secrets en clair dans ce dépôt
+secrets.nix
+*.key
+*.pem
