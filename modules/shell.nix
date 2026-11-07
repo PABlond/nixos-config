@@ -14,8 +14,12 @@
       ll = "ls -lah";
       c = "clear";
       ":q" = "exit";
-      rebuild = "sudo nixos-rebuild switch";
-      update = "sudo nix-channel --update";
+      # The flake path is absolute on purpose: these must work from any
+      # working directory, including under sudo.
+      rebuild = "sudo nixos-rebuild switch --flake /home/alex/dev/nixos-config#nixos";
+      # Bumps flake.lock only. Review the diff, then `rebuild`; if it turns
+      # out badly, `git revert` the lock commit.
+      update = "nix flake update --flake /home/alex/dev/nixos-config";
     };
 
     ohMyZsh = {

@@ -13,6 +13,7 @@
     # Workarounds for upstream nixpkgs regressions -- see the files.
     ./modules/overlays.nix
 
+    ./modules/nix.nix
     ./modules/boot.nix
     ./modules/locale.nix
     ./modules/networking.nix
