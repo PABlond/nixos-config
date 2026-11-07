@@ -1,10 +1,10 @@
-# Démarrage : chargeur et émulation d'architectures.
+# Boot: loader and foreign-architecture emulation.
 #
-# L'ESP est /dev/nvme0n1p1 (1 Go), monté sur /boot, et il est PARTAGÉ avec le
-# chargeur Windows (\EFI\Microsoft\Boot\bootmgfw.efi). systemd-boot le détecte
-# tout seul et affiche une entrée Windows — ne rien déclarer pour ça.
+# The ESP is /dev/nvme0n1p1 (1 GB) mounted at /boot, and it is SHARED with the
+# Windows loader (\EFI\Microsoft\Boot\bootmgfw.efi). systemd-boot discovers
+# that on its own and shows a Windows entry -- nothing to declare for it.
 #
-# Pour redémarrer directement sous Windows sans passer par le menu :
+# To reboot straight into Windows without touching the menu:
 #   sudo systemctl reboot --boot-loader-entry=auto-windows
 
 { ... }:
@@ -13,6 +13,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Permet de construire et d'exécuter des binaires aarch64 (Raspberry Pi).
+  # Allows building and running aarch64 binaries (Raspberry Pi).
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 }

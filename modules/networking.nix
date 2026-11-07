@@ -1,8 +1,8 @@
-# Réseau : nom d'hôte, NetworkManager et pare-feu.
+# Networking: hostname, NetworkManager and firewall.
 #
-# Le port 5432 (PostgreSQL) n'est ouvert QUE sur l'interface tailscale0, donc
-# joignable uniquement depuis le tailnet — jamais exposé au réseau local ni à
-# Internet. C'est la base poker qui écoute derrière.
+# Port 5432 (PostgreSQL) is opened ONLY on the tailscale0 interface, so it is
+# reachable from the tailnet and never exposed to the LAN or the internet.
+# The poker database listens behind it.
 
 { ... }:
 

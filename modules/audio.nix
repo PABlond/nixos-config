@@ -1,8 +1,8 @@
-# Audio : PipeWire, avec les couches de compatibilité ALSA et PulseAudio.
+# Audio: PipeWire, with ALSA and PulseAudio compatibility layers.
 #
-# `services.pulseaudio.enable = false` est obligatoire : PulseAudio et PipeWire
-# ne peuvent pas cohabiter. `rtkit` donne à PipeWire la priorité temps réel,
-# sans quoi on entend des coupures sous charge.
+# `services.pulseaudio.enable = false` is mandatory: PulseAudio and PipeWire
+# cannot coexist. `rtkit` grants PipeWire realtime priority -- without it you
+# get dropouts under load.
 
 { ... }:
 
@@ -16,8 +16,8 @@
     alsa.support32Bit = true;
     pulse.enable = true;
 
-    # À activer si une application JACK est nécessaire (Audacity n'en a pas
-    # besoin, il passe par ALSA).
+    # Enable if a JACK application is needed (Audacity does not need it, it
+    # goes through ALSA).
     # jack.enable = true;
   };
 }

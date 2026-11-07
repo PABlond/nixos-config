@@ -1,13 +1,14 @@
-# Bureau GNOME : GDM, extensions et réglages dconf imposés.
+# GNOME desktop: GDM, extensions and enforced dconf settings.
 #
-# Les réglages passent par un profil dconf système, donc ils s'appliquent sans
-# intervention et survivent à une réinitialisation du profil utilisateur.
+# Settings go through a system dconf profile, so they apply with no user
+# action and survive a reset of the user profile.
 #
-# Les paquets des extensions GNOME sont déclarés dans packages.nix ; ici on ne
-# fait que les activer. Les deux doivent rester cohérents.
+# GNOME extension packages are declared in packages.nix; this file only
+# enables them. The two lists must stay in sync: installing the package does
+# not enable the extension, and enabling one without its package does nothing.
 #
-# Le chemin du fond d'écran est relatif à CE fichier : wallpapers/ vit à la
-# racine du dépôt, d'où le `..`.
+# The wallpaper path is relative to THIS file -- wallpapers/ lives at the repo
+# root, hence the `..`.
 
 { lib, ... }:
 
@@ -28,8 +29,8 @@
           picture-uri = "file://${../wallpapers/spacex2.jpg}";
         };
 
-        # Nombre d'espaces de travail figé à 10, pour que les raccourcis
-        # Alt+1..0 ci-dessous aient toujours une cible.
+        # Workspace count pinned to 10 so the Alt+1..0 bindings below always
+        # have a target.
         "org/gnome/mutter" = {
           dynamic-workspaces = false;
         };

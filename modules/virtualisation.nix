@@ -1,18 +1,18 @@
-# Virtualisation : VirtualBox, Docker et libvirt/QEMU.
+# Virtualisation: VirtualBox, Docker and libvirt/QEMU.
 #
-# Les trois cohabitent, mais ne fais pas tourner une VM VirtualBox et une VM
-# KVM en même temps : elles se disputent les extensions de virtualisation
-# matérielle et la seconde refusera de démarrer.
+# All three coexist, but do not run a VirtualBox VM and a KVM VM at the same
+# time: they compete for the hardware virtualisation extensions and the second
+# one will refuse to start.
 #
-# L'appartenance aux groupes `vboxusers`, `docker` et `libvirtd` est déclarée
-# dans users.nix.
+# Membership of the `vboxusers`, `docker` and `libvirtd` groups is declared in
+# users.nix.
 
 { pkgs, ... }:
 
 {
-  # Compile le module noyau VirtualBox.
+  # Builds the VirtualBox kernel module.
   virtualisation.virtualbox.host.enable = true;
-  # Pack d'extension : support USB 2.0/3.0 dans les invités.
+  # Extension pack: USB 2.0/3.0 passthrough for guests.
   virtualisation.virtualbox.host.enableExtensionPack = true;
   virtualisation.virtualbox.host.enableHardening = false;
 
@@ -25,7 +25,7 @@
     qemu = {
       package = pkgs.qemu_kvm;
       runAsRoot = true;
-      # TPM 2.0 émulé — exigé par Windows 11 en invité.
+      # Emulated TPM 2.0 -- required by Windows 11 guests.
       swtpm.enable = true;
     };
   };

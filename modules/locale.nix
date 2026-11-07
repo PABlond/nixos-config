@@ -1,7 +1,7 @@
-# Fuseau horaire, langue et claviers.
+# Timezone, language and keyboard layouts.
 #
-# Interface système en anglais, formats régionaux (dates, monnaie, papier) en
-# français. Clavier AZERTY, et Caps Lock remappé en Échap.
+# System UI in English, regional formats (dates, currency, paper) in French.
+# AZERTY keyboard, with Caps Lock remapped to Escape.
 
 { ... }:
 

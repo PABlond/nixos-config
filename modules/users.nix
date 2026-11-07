@@ -1,10 +1,10 @@
-# Comptes utilisateurs.
+# User accounts.
 #
-# Les groupes donnent accès sans sudo à : NetworkManager, VirtualBox, Docker
-# et libvirt. `wheel` autorise sudo. Le mot de passe n'est pas déclaré ici
-# (il se définit avec `passwd`) — aucun secret dans ce dépôt.
+# The groups grant passwordless access to NetworkManager, VirtualBox, Docker
+# and libvirt. `wheel` grants sudo. No password is declared here (set it with
+# `passwd`) -- this repository holds no secrets.
 #
-# La configuration de zsh elle-même est dans shell.nix.
+# The zsh configuration itself lives in shell.nix.
 
 { pkgs, ... }:
 

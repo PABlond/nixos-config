@@ -1,8 +1,7 @@
-# Services système : impression, Tailscale, SSH et reverse proxy Caddy.
+# System services: printing, Tailscale, SSH and the Caddy reverse proxy.
 #
-# Caddy donne des noms lisibles aux services de dev tournant en local, plutôt
-# que de retenir des numéros de port. L'ouverture du pare-feu correspondante
-# est dans networking.nix.
+# Caddy gives readable names to locally running dev services instead of having
+# to remember port numbers. The matching firewall rule is in networking.nix.
 
 { ... }:
 
@@ -15,12 +14,12 @@
   services.caddy = {
     enable = true;
 
-    # Coach poker — http://pcoach.localhost
+    # Poker coach -- http://pcoach.localhost
     virtualHosts."pcoach.localhost".extraConfig = ''
       reverse_proxy 127.0.0.1:8080
     '';
 
-    # Front de dev (Vite) — http://clipping.localhost
+    # Dev front end (Vite) -- http://clipping.localhost
     virtualHosts."clipping.localhost".extraConfig = ''
       reverse_proxy 127.0.0.1:5173
     '';

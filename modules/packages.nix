@@ -1,35 +1,23 @@
-# Paquets installés dans le profil système, et réglages nixpkgs.
+# Packages installed into the system profile, plus nixpkgs settings.
 #
-# L'ordre de la liste est conservé tel quel depuis la config d'origine : le
-# regroupement par thème arrive dans un commit séparé, pour que le découpage
-# en modules soit vérifiable comme strictement neutre.
+# The list order is kept exactly as it was in the original configuration:
+# regrouping it by theme lands in a separate commit, so that the split into
+# modules can be verified as strictly behaviour-neutral.
 #
-# Les extensions GNOME listées ici doivent rester cohérentes avec
-# `enabled-extensions` dans desktop-gnome.nix : installer le paquet ne suffit
-# pas à activer l'extension, et l'activer sans le paquet ne fait rien.
+# The GNOME extensions listed here must stay in sync with
+# `enabled-extensions` in desktop-gnome.nix: installing the package is not
+# enough to enable the extension, and enabling one without its package is a
+# no-op.
 
 { pkgs, ... }:
-
-let
-  # Brave : retiré de nixpkgs 26.05 le 2026-11-04 (PR #582874), faute de
-  # committer parmi les mainteneurs pour relayer les correctifs de sécurité.
-  # On le reprend au dépôt du mainteneur d'origine, qui pointe vers les mêmes
-  # binaires précompilés que nixpkgs utilisait.
-  # À RETIRER dès que `pkgs.brave` revient sur 26.05 — PR #584546.
-  braveSrc = builtins.fetchTarball {
-    url = "https://codeberg.org/buckley310/brave-browser-nix/archive/main.tar.gz";
-    sha256 = "0i64spq93r5hixi0jkwn4z7g46c1cc8axkmb6m5av6bc35ps2inn";
-  };
-  bravePkgs = pkgs.callPackage "${braveSrc}/brave" { };
-in
 
 {
   nixpkgs.config.allowUnfree = true;
 
   programs.firefox.enable = true;
 
-  # Permet d'exécuter des binaires non-Nix (AppImages, outils téléchargés) en
-  # leur fournissant un éditeur de liens dynamique.
+  # Lets non-Nix binaries (AppImages, downloaded tools) run by providing them
+  # a dynamic loader.
   programs.nix-ld.enable = true;
 
   environment.systemPackages = with pkgs; [
@@ -41,7 +29,7 @@ in
     alacritty
     vscode
     claude-code
-    # python312 sans sa doc : économise plusieurs centaines de Mo.
+    # python312 without its docs: saves several hundred MB.
     (builtins.removeAttrs python312 [ "doc" ])
     uv
     gnumake
@@ -71,7 +59,8 @@ in
     alsa-utils
     audacity
     qbittorrent
-    bravePkgs.brave
+    # Provided by overlays/brave.nix until nixpkgs 26.05 ships it again.
+    brave
     nmap
     rpi-imager
     tor-browser

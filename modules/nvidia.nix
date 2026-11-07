@@ -1,7 +1,7 @@
-# GPU NVIDIA RTX 2080 (Turing) — pilote propriétaire.
+# NVIDIA RTX 2080 (Turing) -- proprietary driver.
 #
-# `open = true` utilise les modules noyau open-source de NVIDIA, pris en charge
-# à partir de Turing. `enable32Bit` est nécessaire pour Wine/Proton (Lutris).
+# `open = true` uses NVIDIA's open-source kernel modules, supported from
+# Turing onwards. `enable32Bit` is required by Wine/Proton (Lutris).
 
 { pkgs, ... }:
 
@@ -19,11 +19,11 @@
     nvidiaSettings = true;
   };
 
-  # Expose le GPU aux conteneurs Docker.
+  # Exposes the GPU to Docker containers.
   hardware.nvidia-container-toolkit.enable = true;
 
-  # Crée /dev/nvidia* au démarrage : sans ça, les charges CUDA lancées hors
-  # session graphique échouent faute de nœuds de périphérique.
+  # Creates /dev/nvidia* at boot. Without it, CUDA workloads started outside a
+  # graphical session fail for lack of device nodes.
   systemd.services.nvidia-device-nodes = {
     description = "Create NVIDIA device nodes";
     wantedBy = [ "multi-user.target" ];
