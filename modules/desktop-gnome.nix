@@ -57,7 +57,7 @@
           move-to-workspace-3 = [ "<Alt><Shift>3" ];
           move-to-workspace-4 = [ "<Alt><Shift>4" ];
           move-to-workspace-5 = [ "<Alt><Shift>5" ];
-          move-to-workspace-6 = [ "<Alt><Shift>5" ];
+          move-to-workspace-6 = [ "<Alt><Shift>6" ];
           move-to-workspace-7 = [ "<Alt><Shift>7" ];
           move-to-workspace-8 = [ "<Alt><Shift>8" ];
           move-to-workspace-9 = [ "<Alt><Shift>9" ];
