@@ -20,6 +20,7 @@
     ./modules/nvidia.nix
     ./modules/desktop-gnome.nix
     ./modules/audio.nix
+    ./modules/coredump.nix
     ./modules/users.nix
     ./modules/shell.nix
     ./modules/packages.nix
