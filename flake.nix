@@ -16,12 +16,27 @@
   # unannounced in November 2026.
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+
+    # User-level configuration (dotfiles) -- see modules/home.nix. Tracked on
+    # the branch matching nixpkgs: home-manager's release branches follow the
+    # NixOS releases, and mixing a release-X with a nixos-Y is how you get
+    # option-not-found errors that look like your own mistake.
+    #
+    # `follows` makes it use the nixpkgs pinned above rather than its own, so
+    # there is a single nixpkgs in this configuration.
+    home-manager = {
+      url = "github:nix-community/home-manager/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, ... }: {
+  outputs = { nixpkgs, home-manager, ... }: {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      modules = [ ./configuration.nix ];
+      modules = [
+        ./configuration.nix
+        home-manager.nixosModules.home-manager
+      ];
     };
   };
 }

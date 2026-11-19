@@ -18,10 +18,17 @@
     ./modules/locale.nix
     ./modules/networking.nix
     ./modules/nvidia.nix
-    ./modules/desktop-gnome.nix
+    # Sway is the desktop; desktop-i3.nix is a rescue session, not a second
+    # daily environment. See the header of each file.
+    ./modules/desktop-sway.nix
+    ./modules/desktop-i3.nix
     ./modules/audio.nix
     ./modules/coredump.nix
     ./modules/users.nix
+
+    # User-level config (dotfiles). Needs home-manager.nixosModules.home-manager
+    # to be in the flake's module list -- see flake.nix.
+    ./modules/home.nix
     ./modules/shell.nix
     ./modules/packages.nix
     ./modules/services.nix

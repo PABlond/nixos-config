@@ -1,0 +1,201 @@
+# Sway config, ported from the i3 config this machine ran on Arch.
+#
+# Deliberate differences from that file, so they are not mistaken for drift:
+#
+#   - Workspace bindings are unchanged from Arch: Alt + the unshifted digit-row
+#     keysyms (& é " ' ( - è _ ç à). Only the four broken *move* bindings are
+#     fixed -- see the Workspaces section for which, and why. `--to-code` is
+#     deliberately not used anywhere; the Workspaces section records what it
+#     actually does, which is not what it looks like it does.
+#
+#   - HDMI-0 is now HDMI-A-1. The old name was X11/NVIDIA's; Sway uses the
+#     kernel's. DP-2 is unchanged. Both outputs are positioned explicitly --
+#     see the Output section.
+#
+#   - Gone, because Sway or NixOS already does it: picom (Sway composites),
+#     feh (`output bg`), setxkbmap (the `input` block below), xset -dpms
+#     (swayidle), dex --autostart (NixOS runs XDG autostart itself).
+#
+#   - xfce4-panel -> waybar, dmenu -> fuzzel, i3lock -> swaylock,
+#     xss-lock -> swayidle, screenshots -> grim + slurp.
+#
+# Reload with $mod+Shift+C after editing. No rebuild needed.
+
+set $mod Mod1
+set $term alacritty
+set $menu fuzzel
+
+# NixOS puts the D-Bus and systemd session wiring here. Without it, screen
+# sharing and pinentry prompts do not work.
+include /etc/sway/config.d/*
+
+font pango:monospace 16
+
+### Output
+#
+# Stacked vertically, not side by side: screen 2 on top, screen 1 (the main
+# one) below. Sway's own guess was left/right, which is not how these panels
+# physically sit.
+#
+# Both are the same model, so they are only distinguishable by serial. Noted
+# here so that a swapped cable shows up as an obvious mismatch rather than a
+# mysteriously rearranged desktop:
+#
+#   DP-2      Samsung C27F390  serial H4ZN715066  -> top    (screen 2)
+#   HDMI-A-1  Samsung C27F390  serial H4ZN714516  -> bottom (screen 1, main)
+#
+# If top and bottom are inverted, swap the two y values below: 0 and 1080.
+output DP-2     position 0 0
+output HDMI-A-1 position 0 1080
+
+output * bg ~/.config/sway/wallpaper.jpg fill
+
+# Workspace 1 lands on the main screen (bottom), 10 on the secondary (top).
+# The Arch config had these the other way round, which was the stale half of
+# that file: it pinned workspace 1 to DP-2 back when DP-2 was the main panel.
+workspace 1 output HDMI-A-1
+workspace 10 output DP-2
+
+### Input
+#
+# Sway sets the keyboard layout itself, which is why the old
+# `$mod+Shift+Return -> setxkbmap fr` workaround is gone.
+input "type:keyboard" {
+    xkb_layout fr
+    xkb_options caps:escape
+}
+
+focus_follows_mouse yes
+floating_modifier $mod normal
+tiling_drag enable
+
+gaps inner 7
+smart_gaps on
+
+### Autostart
+exec waybar
+exec mako
+exec nm-applet --indicator
+exec udiskie --tray
+exec lxqt-policykit-agent
+
+# Lock after 10 min, screens off after 15, and lock before suspend. This is
+# what xss-lock + i3lock + `xset s off -dpms` used to cover between them.
+exec swayidle -w \
+    timeout 600  'swaylock -f' \
+    timeout 900  'swaymsg "output * dpms off"' \
+    resume       'swaymsg "output * dpms on"' \
+    before-sleep 'swaylock -f'
+
+### Keys
+bindsym $mod+Return exec $term
+bindsym $mod+Shift+a kill
+bindsym $mod+d exec $menu
+
+# Focus moves on j/k/l/m, as on Arch: h is taken by `splith`.
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+m focus right
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+bindsym $mod+Shift+j move left
+bindsym $mod+Shift+k move down
+bindsym $mod+Shift+l move up
+bindsym $mod+Shift+m move right
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+bindsym $mod+h splith
+bindsym $mod+v splitv
+
+bindsym $mod+f fullscreen toggle
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+bindsym $mod+q focus parent
+
+### Workspaces
+#
+# Alt + the digit row as it is actually labelled on this keyboard:
+# & é " ' ( - è _ ç à. These are the unshifted keysyms, so no Shift is held --
+# the same bindings the Arch config used, and the same reflex.
+#
+# `--to-code` was tried here and is wrong for this: it does resolve the keysym
+# to a physical key, but it keeps the shift level with it, so `$mod+1` came
+# out as Alt+Shift+& instead of Alt+&.
+bindsym $mod+ampersand  workspace number 1
+bindsym $mod+eacute     workspace number 2
+bindsym $mod+quotedbl   workspace number 3
+bindsym $mod+apostrophe workspace number 4
+bindsym $mod+parenleft  workspace number 5
+bindsym $mod+minus      workspace number 6
+bindsym $mod+egrave     workspace number 7
+bindsym $mod+underscore workspace number 8
+bindsym $mod+ccedilla   workspace number 9
+bindsym $mod+agrave     workspace number 10
+
+# Moving a container holds Shift, and Shift on those very keys produces the
+# digits -- hence 1..0 here rather than the keysyms above. This is the half of
+# the Arch config that was already right; its four bindings on
+# Shift+eacute/egrave/ccedilla/agrave could never fire, because Shift on those
+# keys yields 2, 7, 9 and 0.
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Shift+0 move container to workspace number 10
+
+### Media keys
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +10%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -10%
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+
+### Screenshots -- region to clipboard, or the whole desktop
+bindsym Print exec grim -g "$(slurp)" - | wl-copy
+bindsym Shift+Print exec grim - | wl-copy
+
+### Session
+bindsym $mod+Shift+x exec swaylock -f
+bindsym $mod+Shift+c reload
+# Sway has no `restart` -- reload covers it, mapped here so the old Arch
+# reflex does not dead-end.
+bindsym $mod+Shift+r reload
+bindsym $mod+Shift+e exec swaynag -t warning \
+    -m 'Quitter Sway et fermer la session ?' \
+    -B 'Oui, quitter' 'swaymsg exit'
+
+### Resize mode
+bindsym $mod+r mode "resize"
+mode "resize" {
+    bindsym j resize shrink width 10px
+    bindsym k resize grow height 10px
+    bindsym l resize shrink height 10px
+    bindsym m resize grow width 10px
+
+    bindsym Left resize shrink width 10px
+    bindsym Down resize grow height 10px
+    bindsym Up resize shrink height 10px
+    bindsym Right resize grow width 10px
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+r mode "default"
+}
+
+### Colours -- Catppuccin Mocha, unchanged from the Arch config
+client.focused          #89b4fa #89b4fa #1e1e2e #cdd6f4 #89b4fa
+client.focused_inactive #313244 #313244 #1e1e2e #cdd6f4 #313244
+client.unfocused        #1e1e2e #1e1e2e #1e1e2e #6c7086 #1e1e2e
+client.urgent           #f38ba8 #f38ba8 #1e1e2e #1e1e2e #f38ba8
+client.placeholder      #1e1e2e #1e1e2e #cdd6f4 #1e1e2e #1e1e2e

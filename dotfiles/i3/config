@@ -1,0 +1,171 @@
+set $mod Mod1
+font pango:monospace 16
+
+exec --no-startup-id dex --autostart --environment i3
+exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+exec --no-startup-id nm-applet
+exec --no-startup-id xfce4-panel
+
+exec --no-startup-id xset s off -dpms
+#exec --no-startup-id xbindkeys
+
+exec_always feh --bg-scale ~/.config/i3/wallpaper.jpg
+exec --no-startup-id picom --config ~/.config/picom/picom.conf -b
+
+set $refresh_i3status killall -SIGUSR1 i3status
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+workspace $ws1 output DP-2
+workspace $ws10 output HDMI-0
+
+exec --no-startup-id i3-msg "workspace number $ws10"
+exec --no-startup-id i3-msg "workspace number $ws1"
+
+floating_modifier $mod
+tiling_drag modifier titlebar
+
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
+bindsym $mod+Return exec alacritty
+#bindsym $mod+Return exec konsole -e tmux
+bindsym $mod+Shift+A kill
+
+bindsym $mod+d exec --no-startup-id dmenu_run
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+m focus right
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+bindsym $mod+Shift+j move left
+bindsym $mod+Shift+k move down
+bindsym $mod+Shift+l move up
+bindsym $mod+Shift+M move right
+
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+bindsym $mod+h split h
+bindsym $mod+v split v
+
+bindsym $mod+f fullscreen toggle
+
+bindsym $mod+Shift+space floating toggle
+
+bindsym $mod+space focus mode_toggle
+
+bindsym $mod+q focus parent
+bindsym $mod+ampersand workspace number $ws1
+bindsym $mod+eacute workspace number $ws2
+bindsym $mod+quotedbl workspace number $ws3
+bindsym $mod+apostrophe workspace number $ws4
+bindsym $mod+parenleft workspace number $ws5
+bindsym $mod+minus workspace number $ws6
+bindsym $mod+egrave workspace number $ws7
+bindsym $mod+underscore workspace number $ws8
+bindsym $mod+ccedilla workspace number $ws9
+bindsym $mod+agrave workspace number $ws10
+
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+eacute move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+egrave move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+ccedilla move container to workspace number $ws9
+bindsym $mod+Shift+agrave move container to workspace number $ws10
+
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+Return exec "setxkbmap fr"
+
+bindsym $mod+r mode "resize"
+mode "resize" {
+        bindsym j resize shrink width 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
+        bindsym l resize shrink height 10 px or 10 ppt
+        bindsym m resize grow width 10 px or 10 ppt
+
+        bindsym Left resize shrink width 4 px or 10 ppt
+        bindsym Down resize grow height 4 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+r mode "default"
+}
+
+#bar {
+#        position top
+#        status_command i3status
+#}
+
+# Catppuccin Macchiato colors
+# https://github.com/catppuccin/catppuccin
+
+# Macchiato palette
+# Rosewater:   #f4dbd6
+# Flamingo:    #f0c6c6
+# Pink:        #f5bde6
+# Mauve:       #c6a0f6
+# Red:         #ed8796
+# Maroon:      #ee99a0
+# Peach:       #f5a97f
+# Yellow:      #eed49f
+# Green:       #a6da95
+# Teal:        #8bd5ca
+# Sky:         #91d7e3
+# Sapphire:    #7dc4e4
+# Blue:        #8aadf4
+# Lavender:    #b7bdf8
+# Text:        #cad3f5
+# Subtext1:    #b8c0e0
+# Subtext0:    #a5adcb
+# Overlay2:    #939ab7
+# Overlay1:    #8087a2
+# Overlay0:    #6e738d
+# Surface2:    #5b6078
+# Surface1:    #494d64
+# Surface0:    #363a4f
+# Base:        #24273a
+# Mantle:      #1e2030
+# Crust:       #181926
+# Catppuccin Mocha Theme
+client.focused          #89b4fa #89b4fa #1e1e2e #cdd6f4 #89b4fa
+client.focused_inactive #313244 #313244 #1e1e2e #cdd6f4 #313244
+client.unfocused        #1e1e2e #1e1e2e #1e1e2e #6c7086 #1e1e2e
+client.urgent           #f38ba8 #f38ba8 #1e1e2e #1e1e2e #f38ba8
+client.placeholder      #1e1e2e #1e1e2e #cdd6f4 #1e1e2e #1e1e2e
+
+
+# Matrix Theme (green on black) 
+#client.focused          #00ff00 #00ff00 #000000 #00ff00 #00ff00
+#client.focused_inactive #003300 #003300 #000000 #00ff00 #003300
+#client.unfocused        #000000 #000000 #003300 #00ff00 #000000
+#client.urgent           #00ff00 #00ff00 #000000 #000000 #00ff00
+#client.placeholder      #000000 #000000 #00ff00 #000000 #000000
+
+gaps inner 7px
+smart_gaps on
+

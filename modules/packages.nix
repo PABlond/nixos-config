@@ -1,9 +1,8 @@
 # Packages installed into the system profile, plus nixpkgs settings.
 #
-# Grouped by purpose. The GNOME extensions at the bottom must stay in sync
-# with `enabled-extensions` in desktop-gnome.nix: installing the package is
-# not enough to enable the extension, and enabling one without its package is
-# a no-op.
+# Grouped by purpose. Desktop-specific tooling does not live here: the Sway
+# session's pieces are in desktop-sway.nix and the i3 rescue session's in
+# desktop-i3.nix, each next to the option that enables them.
 
 { pkgs, ... }:
 
@@ -57,7 +56,6 @@
     yt-dlp
     sox
     audacity
-    davinci-resolve
     inkscape
     gimp
 
@@ -69,8 +67,10 @@
     libreoffice
 
     # Desktop, theming and launcher
+    # albert is kept, but Sway binds fuzzel to $mod+d: albert registers its
+    # global hotkey through X11, so under Wayland it has to be triggered from
+    # the compositor anyway (`albert toggle`).
     albert
-    gnome-tweaks
     whitesur-icon-theme
     whitesur-gtk-theme
 
@@ -83,11 +83,5 @@
     # Misc
     qbittorrent
     rpi-imager
-
-    # GNOME extensions -- keep in sync with desktop-gnome.nix
-    gnomeExtensions.blur-my-shell
-    gnomeExtensions.simple-workspaces-bar
-    gnomeExtensions.just-perfection
-    gnomeExtensions.tiling-shell
   ];
 }
