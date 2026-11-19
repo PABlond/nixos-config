@@ -56,7 +56,11 @@
 /* The bar itself: translucent and detached from the screen edges by the
  * `margin-*` keys in `config`, with a hairline border instead of a radius. */
 window#waybar {
-  background: alpha(@base, 0.82);
+  /* 0.96, not the 0.82 this had while swayfx blurred the surface behind it.
+   * Without that blur, 0.82 stops reading as frosted glass and starts reading
+   * as a wallpaper showing through the bar. Just enough alpha left to suggest
+   * depth; raise to 1.0 for fully opaque. */
+  background: alpha(@base, 0.96);
   border: 1px solid alpha(@surface0, 0.9);
   color: @text;
 }

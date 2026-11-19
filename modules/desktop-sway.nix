@@ -28,21 +28,18 @@
   programs.sway = {
     enable = true;
 
-    # swayfx rather than sway, for one reason: rounded window corners, so the
-    # windows match the waybar pills and the WhiteSur-Dark look. Upstream sway
-    # refuses decorations, blur and animations on principle -- this is not an
-    # oversight to work around, it is their position.
+    # Upstream sway, deliberately -- the default, so no `package` line.
     #
-    # Accepting the tradeoff with eyes open: swayfx IS sway plus extras, so
-    # the config in dotfiles/sway/config works verbatim, and it is only one
-    # release behind (0.5.3 is based on sway 1.11.0, we were on 1.12). But it
-    # is a fork with a smaller team, and the day it stalls the choice is
-    # between its effects and upstream's fixes.
+    # swayfx was tried here for two days in November 2026. It was adopted for
+    # rounded window corners, which upstream refuses on principle along with
+    # blur and animations. The corners were then compared side by side against
+    # square and square won, which left the fork justified only by window
+    # shadows and the blur behind waybar. Those were switched off live, judged
+    # not worth a fork one release behind upstream (0.5.3 is based on sway
+    # 1.11.0 against 1.12 here), and swayfx was dropped.
     #
-    # Rollback is this one line: set it back to `pkgs.sway` and delete the
-    # corner_radius / shadows / blur / layer_effects block from the sway
-    # config, which are the only directives sway proper does not understand.
-    package = pkgs.swayfx;
+    # Reinstating it is this: `package = pkgs.swayfx;` plus the effects block
+    # that commit 51765d0 removed from dotfiles/sway/config.
 
     # Needed for GTK apps to pick up their theme and portal settings.
     wrapperFeatures.gtk = true;

@@ -100,45 +100,20 @@ gaps inner 7
 # $mod + mouse.
 default_border pixel 2
 
-### swayfx effects
+# No effects block here, and this file is valid under upstream sway again.
 #
-# These directives DO NOT EXIST in upstream sway -- they come from swayfx,
-# selected in modules/desktop-sway.nix. If the package there is ever set back
-# to pkgs.sway, delete this block or every line of it becomes a config error.
+# It briefly ran on swayfx (see modules/desktop-sway.nix) with corner_radius,
+# shadows and a blurred waybar. All three are gone: the corners lost a side by
+# side comparison, and the shadows and blur were not worth keeping a fork for.
 #
-# No rounded corners. A rounded variant (corner_radius 10, matching rounded
-# waybar modules) was built and compared side by side on 2026-11-19; square
-# won, so `corner_radius` and `smart_corner_radius` are simply absent rather
-# than set to 0.
+# Two things learned, worth not relearning:
 #
-# Worth knowing before trying it again: `corner_radius` is documented as "set
-# corner radius for new windows". Changing it at runtime leaves every open
-# window alone, so a `swaymsg corner_radius N` that reports success looks like
-# it did nothing until you close and reopen an app. Same semantics as
-# `default_border`.
-
-# Shadows read as macOS depth rather than as a rice, which is why they are
-# this subtle. They only work here because `gaps inner 7` leaves room between
-# tiles -- without gaps, adjacent shadows muddy into each other.
-shadows enable
-shadow_blur_radius 16
-shadow_offset 0 3
-shadow_color #11111b99
-shadow_inactive_color #11111b55
-
-# Blur is applied ONLY to waybar, not globally. The bar's background is
-# alpha(base, 0.82), so without blur the translucency just shows a smeared
-# wallpaper; with it, it becomes frosted glass. Windows here are opaque, so
-# blurring them would cost GPU time for no visible change.
-#
-# No corner_radius here either. It clips the layer-shell surface itself, which
-# is separate from the CSS: leaving it at 14 while style.css was square kept
-# the bar visually rounded anyway, through the clip rather than the paint.
-layer_effects "waybar" {
-    blur enable;
-    blur_ignore_transparent enable;
-    shadows enable;
-}
+#   - `corner_radius` is "set corner radius for new windows". A runtime
+#     `swaymsg corner_radius N` reports success and changes nothing visible
+#     until an app is reopened. Same semantics as `default_border`.
+#   - `layer_effects "waybar" { corner_radius N }` clips the layer-shell
+#     surface, which is independent of the CSS. A square style.css with that
+#     still set kept the bar visually rounded, through the clip, not the paint.
 
 ### Autostart
 exec waybar
