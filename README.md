@@ -12,7 +12,7 @@ the user's dotfiles, so a reinstall needs no file copied by hand.
 | CPU | AMD |
 | GPU | NVIDIA RTX 2080, proprietary driver, `open` kernel modules |
 | Disks | `nvme0n1` NixOS (shared ESP) · `sda` Windows 11 (dual boot) |
-| Desktop | swayfx (Wayland) via SDDM, with an i3/X11 rescue session |
+| Desktop | Sway (Wayland) via SDDM, with an i3/X11 rescue session |
 | Theming | WhiteSur-Dark GTK, macOS cursors, Hack Nerd Font, waybar |
 | Monitors | 2 × Samsung C27F390 1080p, stacked vertically |
 | Keyboard | `fr`, `caps:escape` |
@@ -65,7 +65,7 @@ itself. Every row below is a thing that looked like a broken setting.
 
 | Change | What picks it up |
 |---|---|
-| sway colours, bindings, gaps | `$mod+Shift+C` (or `+R`; swayfx has no `restart`) |
+| sway colours, bindings, gaps | `$mod+Shift+C` (or `+R`; sway has no `restart`) |
 | `corner_radius`, `default_border` | **new windows only** — reopen the app |
 | `workspace <n> output <name>` | newly created workspaces only — existing ones stay put |
 | `exec` lines (waybar, mako, tray) | **nothing**; a reload never replays them |
