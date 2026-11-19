@@ -12,7 +12,8 @@ the user's dotfiles, so a reinstall needs no file copied by hand.
 | CPU | AMD |
 | GPU | NVIDIA RTX 2080, proprietary driver, `open` kernel modules |
 | Disks | `nvme0n1` NixOS (shared ESP) · `sda` Windows 11 (dual boot) |
-| Desktop | Sway (Wayland) via SDDM, with an i3/X11 rescue session |
+| Desktop | swayfx (Wayland) via SDDM, with an i3/X11 rescue session |
+| Theming | WhiteSur-Dark GTK, macOS cursors, Hack Nerd Font, waybar |
 | Monitors | 2 × Samsung C27F390 1080p, stacked vertically |
 | Keyboard | `fr`, `caps:escape` |
 
@@ -56,6 +57,33 @@ referenced by **absolute path** (`/home/alex/dev/nixos-config`), so cloning the
 repo anywhere else leaves a dangling symlink and Sway falls back to the stock
 `/etc/sway/config`. Everything else uses `.source` and survives the repo being
 moved or deleted.
+
+## Reloading: what each command does and does not do
+
+Most of the time lost configuring this desktop went here, not into the config
+itself. Every row below is a thing that looked like a broken setting.
+
+| Change | What picks it up |
+|---|---|
+| sway colours, bindings, gaps | `$mod+Shift+C` (or `+R`; swayfx has no `restart`) |
+| `corner_radius`, `default_border` | **new windows only** — reopen the app |
+| `workspace <n> output <name>` | newly created workspaces only — existing ones stay put |
+| `exec` lines (waybar, mako, tray) | **nothing**; a reload never replays them |
+| waybar CSS and modules | `pkill -SIGUSR2 -x '\.?waybar(-wrapped)?'` |
+| waybar `margin-*` | a full waybar restart; SIGUSR2 does not move the surface |
+| anything in `modules/` | `rebuild` |
+| the sway/waybar binary itself | log out and back in |
+
+Two traps worth stating outright:
+
+**`pkill waybar` matches nothing here.** nixpkgs wraps the binary, so the
+process is named `.waybar-wrapped` — and `pkill`/`killall` still exit 0 after
+matching nothing, which reads as success. The result is stacked waybars, the
+stale one painted over the new one. Match on the real name, as above.
+
+**`pkill -f <anything>` can kill this shell.** `-f` matches whole command
+lines, including the command line of the shell running the pkill if the
+pattern appears in it. Prefer `-x` on the process name.
 
 ## Updating nixpkgs
 
