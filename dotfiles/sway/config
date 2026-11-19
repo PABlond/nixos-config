@@ -16,14 +16,19 @@
 #     feh (`output bg`), setxkbmap (the `input` block below), xset -dpms
 #     (swayidle), dex --autostart (NixOS runs XDG autostart itself).
 #
-#   - xfce4-panel -> waybar, dmenu -> fuzzel, i3lock -> swaylock,
+#   - xfce4-panel -> waybar, dmenu -> albert, i3lock -> swaylock,
 #     xss-lock -> swayidle, screenshots -> grim + slurp.
 #
 # Reload with $mod+Shift+C after editing. No rebuild needed.
 
 set $mod Mod1
 set $term alacritty
-set $menu fuzzel
+
+# Albert, not fuzzel. It has to be *running* for this to do anything -- see
+# the `exec albert` in the autostart section. Albert's own global hotkey is
+# useless here: it logs "Hotkeys are not supported on this platform" under
+# Wayland, so the compositor has to trigger it.
+set $menu albert toggle
 
 # NixOS puts the D-Bus and systemd session wiring here. Without it, screen
 # sharing and pinentry prompts do not work.
@@ -121,6 +126,16 @@ exec mako
 exec nm-applet --indicator
 exec udiskie --tray
 exec lxqt-policykit-agent
+
+# Albert runs as a resident process; $mod+d only sends it an RPC. Without this
+# line the binding silently does nothing.
+exec albert
+
+# Albert's window reports an EMPTY app_id, so `for_window [app_id="albert"]`
+# matches nothing -- the title is the only handle. It already comes up
+# floating, so no rule is needed today; this is here so the next person
+# writing one does not lose twenty minutes to it.
+#   for_window [title="^Albert$"] floating enable
 
 # No idle handling at all. Deliberately.
 #

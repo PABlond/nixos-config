@@ -85,12 +85,25 @@
   # so without it they start asking for passwords again.
   services.gnome.gnome-keyring.enable = true;
 
+  # No `security.pam.services.sddm.enableGnomeKeyring` here, deliberately. It
+  # was added on 2026-11-19 on the assumption that swapping GDM for SDDM had
+  # lost the PAM wiring, and it does nothing: the generated `sddm` service is
+  # only `auth substack login`, so it inherits everything from `login`, which
+  # the gnome-keyring module already wires. Setting the option on `sddm`
+  # evaluates to true and emits no pam_gnome_keyring line at all.
+  #
+  # If an app ever prompts to unlock the keyring, PAM is not the place to
+  # look: it means the keyring's own password has diverged from the login
+  # password, so the automatic unlock cannot succeed.
+
   # Also previously implied by GNOME: mounting a USB stick from the tray.
   services.udisks2.enable = true;
 
   environment.systemPackages = with pkgs; [
-    # Launcher, bound to $mod+d. dmenu's ergonomics, native Wayland.
-    fuzzel
+    # The launcher is albert, declared in packages.nix, bound to $mod+d and
+    # started by the sway config. fuzzel was used first and dropped on request;
+    # it is one line away if albert ever needs a stand-in, since albert has to
+    # be running for its binding to do anything.
 
     # Bar, notifications, wallpaper, lock -- the pieces GNOME Shell used to be.
     waybar
