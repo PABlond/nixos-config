@@ -26,7 +26,7 @@ hardware-configuration.nix   generated, machine-specific, do not hand-edit
 modules/                     one file per domain
 dotfiles/                    user config, placed by modules/home.nix
 overlays/                    upstream workarounds, each self-documented
-wallpapers/                  SDDM/system wallpapers (the Sway one lives in dotfiles/)
+wallpapers/                  images; the desktop background is picked in modules/home.nix
 ```
 
 ## Applying

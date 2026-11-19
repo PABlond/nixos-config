@@ -56,7 +56,15 @@ in
         "sway/config".source = config.lib.file.mkOutOfStoreSymlink "${repo}/dotfiles/sway/config";
 
         # Stable -- immutable copies in the store.
-        "sway/wallpaper.jpg".source = ../dotfiles/sway/wallpaper.jpg;
+        #
+        # The wallpaper is sourced from wallpapers/ rather than dotfiles/, so
+        # that directory stays the one place images live. It kept its generic
+        # target name on purpose: swapping the desktop background is a change
+        # to this single line, with the sway config untouched.
+        #
+        # wallpapers/ was orphaned when desktop-gnome.nix went away -- it was
+        # the only thing referencing it, through a dconf picture-uri.
+        "sway/wallpaper.jpg".source = ../wallpapers/spacex2.jpg;
         "alacritty/alacritty.toml".source = ../dotfiles/alacritty/alacritty.toml;
         "picom/picom.conf".source = ../dotfiles/picom/picom.conf;
 
