@@ -25,7 +25,6 @@ configuration.nix            entry point -- imports only
 hardware-configuration.nix   generated, machine-specific, do not hand-edit
 modules/                     one file per domain
 dotfiles/                    user config, placed by modules/home.nix
-overlays/                    upstream workarounds, each self-documented
 wallpapers/                  images; the desktop background is picked in modules/home.nix
 ```
 
@@ -77,18 +76,26 @@ A lock bump can also move the **kernel**. When it does, `rebuild` alone leaves
 the running kernel in place while out-of-tree modules (VirtualBox) are built
 only for the new one: reboot rather than just logging out.
 
-## Temporary workarounds in place
+## Workarounds
 
-| File | Issue | Status |
-|---|---|---|
-| `overlays/brave.nix` | Brave dropped from 26.05, [PR #584546](https://github.com/NixOS/nixpkgs/pull/584546) | **Ready to remove** -- `brave` is back in nixpkgs (1.99.57, newer than the 1.99.55 this overlay pins) |
+None. There is no `overlays/` directory any more -- both November 2026
+workarounds are gone, and the lesson from how they ended is worth keeping.
 
-`overlays/vscode-ripgrep.nix` was removed on 2026-11-19. It patched a path that
-VS Code 1.144.0 had moved; upstream resolved the bug by reverting to 1.119.0,
-which restored the original path. The overlay then rewrote a correct path into a
-nonexistent one and broke the build -- not the "silently inert" outcome its own
-header predicted. Reverting a version, rather than fixing a path, is the case
-that header missed. Worth remembering for the Brave overlay too.
+**`overlays/vscode-ripgrep.nix`**, removed 2026-11-19. It patched a path that VS
+Code 1.144.0 had moved. Upstream resolved the bug by *reverting to 1.119.0*,
+which restored the original path -- so the overlay then rewrote a correct path
+into a nonexistent one and broke the build. Its own header had predicted that an
+upstream fix would make it "silently inert"; that holds when upstream changes a
+path, not when it reverts a version. A workaround keyed on a string that
+reappears does not go quiet, it goes wrong.
+
+**`overlays/brave.nix`**, removed 2026-11-19. Brave had been dropped from
+nixpkgs because none of its maintainers held commit rights, which delayed
+security fixes. It is back in the tree (1.99.57, with six maintainers), so both
+the package and the reason it left are resolved.
+
+The takeaway for the next one: write down the removal *condition*, check it
+periodically, and do not assume a stale workaround fails safely.
 
 ## Reinstalling from scratch
 
