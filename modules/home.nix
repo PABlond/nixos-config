@@ -48,23 +48,81 @@ in
 
     # Takes its own `config`: mkOutOfStoreSymlink lives in home-manager's lib,
     # not in the NixOS one.
-    users.alex = { config, ... }: {
+    users.alex = { config, pkgs, ... }: {
       home.stateVersion = "26.05";
+
+      # Appearance. GNOME used to own all of this through gnome-tweaks, set by
+      # hand and stored nowhere -- which is why whitesur-gtk-theme and
+      # whitesur-icon-theme were in the package list while nothing applied
+      # them. Declared here instead, so it survives a reinstall.
+      #
+      # WhiteSur is the macOS-alike suite; Dark to match the Catppuccin Mocha
+      # colours in the sway config. `-Light`, and the `-solid` variants without
+      # transparency, are drop-in replacements for the name below.
+      gtk = {
+        enable = true;
+
+        theme = {
+          name = "WhiteSur-Dark";
+          package = pkgs.whitesur-gtk-theme;
+        };
+
+        iconTheme = {
+          name = "WhiteSur-dark";
+          package = pkgs.whitesur-icon-theme;
+        };
+
+        font = {
+          name = "Noto Sans";
+          size = 11;
+        };
+      };
+
+      # Cursor. Nothing was installed at all before this -- not one directory
+      # under share/icons had a cursors/ subdir, so what was on screen was
+      # sway's built-in default.
+      #
+      # apple-cursor ships Apple's actual artwork and is therefore unfree;
+      # allowUnfree in packages.nix covers it. `whitesur-cursors` (theme name
+      # "WhiteSur-cursors") is the free lookalike if that matters.
+      #
+      # This sets GTK, X11/XWayland and XCURSOR_* in the session environment.
+      # It does NOT configure sway: the `sway.enable` sub-option writes into
+      # home-manager's wayland.windowManager.sway module, which is unused here
+      # since the sway config is a plain file -- it would be silently inert.
+      # The `seat * xcursor_theme` line in dotfiles/sway/config does that job.
+      home.pointerCursor = {
+        package = pkgs.apple-cursor;
+        name = "macOS";
+        size = 24;
+        gtk.enable = true;
+        x11.enable = true;
+      };
 
       xdg.configFile = {
         # Tuned often -- kept live. See the header.
         "sway/config".source = config.lib.file.mkOutOfStoreSymlink "${repo}/dotfiles/sway/config";
 
+        # Same reasoning: a bar's colours and module list get fiddled with, and
+        # `killall -SIGUSR2 waybar` reloads both files with no rebuild.
+        "waybar/config".source = config.lib.file.mkOutOfStoreSymlink "${repo}/dotfiles/waybar/config";
+        "waybar/style.css".source = config.lib.file.mkOutOfStoreSymlink "${repo}/dotfiles/waybar/style.css";
+
         # Stable -- immutable copies in the store.
         #
         # The wallpaper is sourced from wallpapers/ rather than dotfiles/, so
-        # that directory stays the one place images live. It kept its generic
-        # target name on purpose: swapping the desktop background is a change
-        # to this single line, with the sway config untouched.
+        # that directory stays the one place images live. The target name is
+        # generic AND extensionless on purpose: swapping the background is a
+        # change to this single line whatever the image format, with the sway
+        # config untouched. It was `wallpaper.jpg` while pointing at a .png,
+        # which worked -- swaybg sniffs the content, not the name -- but lied.
+        #
+        # A new image here must be `git add`ed before it will build. A flake
+        # only sees git-tracked files, and the error does not say so.
         #
         # wallpapers/ was orphaned when desktop-gnome.nix went away -- it was
         # the only thing referencing it, through a dconf picture-uri.
-        "sway/wallpaper.jpg".source = ../wallpapers/spacex2.jpg;
+        "sway/wallpaper".source = ../wallpapers/satellite.png;
         "alacritty/alacritty.toml".source = ../dotfiles/alacritty/alacritty.toml;
         "picom/picom.conf".source = ../dotfiles/picom/picom.conf;
 
