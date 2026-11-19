@@ -2,11 +2,11 @@
 #
 # Deliberate differences from that file, so they are not mistaken for drift:
 #
-#   - Workspace bindings are unchanged from Arch: Alt + the unshifted digit-row
-#     keysyms (& é " ' ( - è _ ç à). Only the four broken *move* bindings are
-#     fixed -- see the Workspaces section for which, and why. `--to-code` is
-#     deliberately not used anywhere; the Workspaces section records what it
-#     actually does, which is not what it looks like it does.
+#   - Workspace bindings, switch AND move, are all on the digit-row keysyms
+#     (& é " ' ( - è _ ç à), never on the digits. The Workspaces section
+#     explains why, with the relevant lines of sway's source -- read it before
+#     "fixing" a move binding to `$mod+Shift+<digit>`, which is exactly the
+#     mistake this file has already made once. `--to-code` is not used either.
 #
 #   - HDMI-0 is now HDMI-A-1. The old name was X11/NVIDIA's; Sway uses the
 #     kernel's. DP-2 is unchanged. Both outputs are positioned explicitly --
@@ -141,9 +141,10 @@ bindsym $mod+q focus parent
 # & é " ' ( - è _ ç à. These are the unshifted keysyms, so no Shift is held --
 # the same bindings the Arch config used, and the same reflex.
 #
-# `--to-code` was tried here and is wrong for this: it does resolve the keysym
-# to a physical key, but it keeps the shift level with it, so `$mod+1` came
-# out as Alt+Shift+& instead of Alt+&.
+# `--to-code $mod+1` was tried here and did not behave: in use it required
+# Alt+Shift+& rather than Alt+&. The mechanism behind that is not established
+# here, so it is recorded as an observation rather than explained -- the
+# keysym form below works and needs no flag.
 bindsym $mod+ampersand  workspace number 1
 bindsym $mod+eacute     workspace number 2
 bindsym $mod+quotedbl   workspace number 3
@@ -155,21 +156,35 @@ bindsym $mod+underscore workspace number 8
 bindsym $mod+ccedilla   workspace number 9
 bindsym $mod+agrave     workspace number 10
 
-# Moving a container holds Shift, and Shift on those very keys produces the
-# digits -- hence 1..0 here rather than the keysyms above. This is the half of
-# the Arch config that was already right; its four bindings on
-# Shift+eacute/egrave/ccedilla/agrave could never fire, because Shift on those
-# keys yields 2, 7, 9 and 0.
-bindsym $mod+Shift+1 move container to workspace number 1
-bindsym $mod+Shift+2 move container to workspace number 2
-bindsym $mod+Shift+3 move container to workspace number 3
-bindsym $mod+Shift+4 move container to workspace number 4
-bindsym $mod+Shift+5 move container to workspace number 5
-bindsym $mod+Shift+6 move container to workspace number 6
-bindsym $mod+Shift+7 move container to workspace number 7
-bindsym $mod+Shift+8 move container to workspace number 8
-bindsym $mod+Shift+9 move container to workspace number 9
-bindsym $mod+Shift+0 move container to workspace number 10
+# Moving a container: the SAME keysyms, plus Shift. Not the digits -- that is
+# the counter-intuitive part, and getting it wrong is what broke this twice.
+#
+# sway/input/keyboard.c builds two candidates for every key press:
+#
+#   translated  the keysym the modifiers actually produce (`2` here), but with
+#               the consumed modifiers stripped: `*modifiers &= ~consumed`,
+#               so Shift is gone. This matches `$mod+2`.
+#   raw         the level-1 keysym (`eacute`), via
+#               xkb_keymap_key_get_syms_by_level(..., 0, ...), with modifiers
+#               left intact. This matches `$mod+Shift+eacute`.
+#
+# So Alt+Shift+é offers `2` without Shift, or `eacute` with Shift -- and a
+# binding written `$mod+Shift+2` matches neither. On a US layout it works,
+# because there `2` IS the level-1 keysym; sway's own comment spells that out:
+# "On US layout, pressing Alt+Shift+2 will trigger Alt+@".
+#
+# Which means the Arch config had this right for 2, 7, 9 and 10 and wrong for
+# the six on digits -- the opposite of what the migration assumed.
+bindsym $mod+Shift+ampersand  move container to workspace number 1
+bindsym $mod+Shift+eacute     move container to workspace number 2
+bindsym $mod+Shift+quotedbl   move container to workspace number 3
+bindsym $mod+Shift+apostrophe move container to workspace number 4
+bindsym $mod+Shift+parenleft  move container to workspace number 5
+bindsym $mod+Shift+minus      move container to workspace number 6
+bindsym $mod+Shift+egrave     move container to workspace number 7
+bindsym $mod+Shift+underscore move container to workspace number 8
+bindsym $mod+Shift+ccedilla   move container to workspace number 9
+bindsym $mod+Shift+agrave     move container to workspace number 10
 
 ### Media keys
 bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +10%
