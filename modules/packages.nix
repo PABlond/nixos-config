@@ -71,8 +71,13 @@
     # global hotkey through X11, so under Wayland it has to be triggered from
     # the compositor anyway (`albert toggle`).
     albert
+
+    # The macOS-alike theme suite. Also declared in modules/home.nix, which is
+    # what actually applies them; kept here so SDDM and XWayland clients find
+    # them outside the user profile too.
     whitesur-icon-theme
     whitesur-gtk-theme
+    apple-cursor
 
     # Gaming
     lutris
