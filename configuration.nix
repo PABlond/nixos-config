@@ -19,6 +19,7 @@
     # daily environment. See the header of each file.
     ./modules/desktop-sway.nix
     ./modules/desktop-i3.nix
+    ./modules/fonts.nix
     ./modules/audio.nix
     ./modules/coredump.nix
     ./modules/users.nix
