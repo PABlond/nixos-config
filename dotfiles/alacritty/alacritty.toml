@@ -16,37 +16,52 @@ key = "X"
 mods = "Control"
 command = { program = "sh", args = ["-c", "alacritty --hold -e sh -c 'xclip -o | xclip -selection clipboard && xclip -selection clipboard -o | sed -e s/.// > /dev/null'"] }
 
+# Catppuccin Mocha.
+#
+# This was Tokyo Night Storm until 2026-11-19 -- background #24283b,
+# foreground #c0caf5, blue #7aa2f7 -- which is a different theme entirely, not
+# a near miss. The terminal was the one thing still off-palette after sway,
+# waybar and GTK were unified.
+#
+# The hex values below are taken from the same palette block that
+# dotfiles/waybar/style.css declares and that the `client.*` lines in
+# dotfiles/sway/config use, so they agree by construction rather than by
+# having been copied from somewhere. The Catppuccin name of each is in the
+# comment so a future edit stays inside the palette.
+
 [colors.primary]
-background = "#24283b"
-foreground = "#c0caf5"
+background = "#1e1e2e" # base
+foreground = "#cdd6f4" # text
 
 [colors.normal]
-black   = "#1d202f"
-red     = "#f7768e"
-green   = "#9ece6a"
-yellow  = "#e0af68"
-blue    = "#7aa2f7"
-magenta = "#bb9af7"
-cyan    = "#7dcfff"
-white   = "#a9b1d6"
+black   = "#45475a" # surface1
+red     = "#f38ba8" # red
+green   = "#a6e3a1" # green
+yellow  = "#f9e2af" # yellow
+blue    = "#89b4fa" # blue -- same as client.focused in the sway config
+magenta = "#f5c2e7" # pink
+cyan    = "#94e2d5" # teal
+white   = "#bac2de" # subtext1
 
 [colors.bright]
-black   = "#414868"
-red     = "#f7768e"
-green   = "#9ece6a"
-yellow  = "#e0af68"
-blue    = "#7aa2f7"
-magenta = "#bb9af7"
-cyan    = "#7dcfff"
-white   = "#c0caf5"
+black   = "#585b70" # surface2
+red     = "#f38ba8"
+green   = "#a6e3a1"
+yellow  = "#f9e2af"
+blue    = "#89b4fa"
+magenta = "#f5c2e7"
+cyan    = "#94e2d5"
+white   = "#a6adc8" # subtext0
 
 [colors.selection]
-background = "#364a82"
-foreground = "#c0caf5"
+background = "#f5e0dc" # rosewater
+foreground = "#1e1e2e" # base
 
 [colors.cursor]
-text = "#ff0000"
-cursor = "#e0af68"
+# Was #ff0000 -- a pure red that belongs to no palette and looks like a
+# leftover from debugging.
+text = "#1e1e2e"   # base
+cursor = "#f5e0dc" # rosewater
 
 [cursor]
 style = "Block"
