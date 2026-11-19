@@ -63,6 +63,13 @@
     pavucontrol
     alsa-utils
 
+    # Keyring management. Needed when an app prompts to unlock the keyring:
+    # that means the keyring's own password has diverged from the login
+    # password, so PAM's automatic unlock cannot succeed. Open the "Login"
+    # keyring here and set its password to the login one -- or to empty, which
+    # removes the prompt at the cost of encryption at rest.
+    seahorse
+
     # Office
     libreoffice
 
