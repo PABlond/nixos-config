@@ -137,6 +137,23 @@ exec albert
 # writing one does not lose twenty minutes to it.
 #   for_window [title="^Albert$"] floating enable
 
+### Window rules
+#
+# VirtualBox floats rather than tiles. It is an XWayland client that insists
+# on placing and resizing its own top-levels -- the log is full of
+# `UIMachineWindowSeamless::placeOnScreen: Resize window to 420x919` while
+# sway had given it a 961x1025 tile. Tiling it makes it draw at a geometry it
+# does not have, which is where the black panes came from.
+#
+# Seamless mode is a lost cause here regardless, and not because of Wayland
+# alone: it needs to position shaped top-levels freely over the host desktop,
+# which any tiling compositor refuses by design -- i3 would fight it too.
+# XWayland then makes it worse, reporting `hostWindowMapping: no`, the very
+# capability seamless needs. It is turned off for this VM with
+# `VBoxManage setextradata w11- GUI/Seamless false`; the usable arrangement in
+# a tiling WM is fullscreen or scaled mode on a workspace of its own.
+for_window [class="^VirtualBox"] floating enable
+
 # No idle handling at all. Deliberately.
 #
 # There was a swayidle here (lock at 10 min, screens off at 15), added during
