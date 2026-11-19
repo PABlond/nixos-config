@@ -48,7 +48,10 @@ font pango:monospace 16
 output DP-2     position 0 0
 output HDMI-A-1 position 0 1080
 
-output * bg ~/.config/sway/wallpaper.jpg fill
+# Extensionless on purpose: the image is chosen in modules/home.nix, which
+# places it here whatever its format. swaybg does not watch the file, so a
+# `swaymsg reload` is what picks up a new one.
+output * bg ~/.config/sway/wallpaper fill
 
 # Workspace 1 lands on the main screen (bottom), 10 on the secondary (top).
 # The Arch config had these the other way round, which was the stale half of
@@ -69,8 +72,23 @@ focus_follows_mouse yes
 floating_modifier $mod normal
 tiling_drag enable
 
+# Cursor theme. Set here rather than left to XCURSOR_THEME, because sway is
+# started by SDDM and not by `systemd --user`, so it does not necessarily read
+# the environment.d file home-manager writes. The theme and size must stay in
+# step with home.pointerCursor in modules/home.nix.
+seat * xcursor_theme macOS 24
+
+# 7 px, and the waybar margins in dotfiles/waybar/config must match it --
+# sway applies this gap at the workspace edges as well, so this single number
+# is what the bar has to align to.
 gaps inner 7
-smart_gaps on
+
+# `smart_gaps on` is deliberately NOT set. It drops the gaps entirely when a
+# workspace holds one window, which put that window flush at x=0 width=1920
+# while the bar sat at x=7 width=1906: a visible mismatch on every
+# single-window workspace, which is most of them. Keeping gaps unconditional
+# costs 7px of screen and makes the bar line up with the windows in every
+# case, with one window or six.
 
 # No titlebars, just a 2px border. In a tiling layout the title says little
 # and costs a row on every window; the client.* colours at the bottom still
@@ -81,6 +99,46 @@ smart_gaps on
 # drop those as well, at the cost of having nothing to drag them by except
 # $mod + mouse.
 default_border pixel 2
+
+### swayfx effects
+#
+# These directives DO NOT EXIST in upstream sway -- they come from swayfx,
+# selected in modules/desktop-sway.nix. If the package there is ever set back
+# to pkgs.sway, delete this block or every line of it becomes a config error.
+#
+# No rounded corners. A rounded variant (corner_radius 10, matching rounded
+# waybar modules) was built and compared side by side on 2026-11-19; square
+# won, so `corner_radius` and `smart_corner_radius` are simply absent rather
+# than set to 0.
+#
+# Worth knowing before trying it again: `corner_radius` is documented as "set
+# corner radius for new windows". Changing it at runtime leaves every open
+# window alone, so a `swaymsg corner_radius N` that reports success looks like
+# it did nothing until you close and reopen an app. Same semantics as
+# `default_border`.
+
+# Shadows read as macOS depth rather than as a rice, which is why they are
+# this subtle. They only work here because `gaps inner 7` leaves room between
+# tiles -- without gaps, adjacent shadows muddy into each other.
+shadows enable
+shadow_blur_radius 16
+shadow_offset 0 3
+shadow_color #11111b99
+shadow_inactive_color #11111b55
+
+# Blur is applied ONLY to waybar, not globally. The bar's background is
+# alpha(base, 0.82), so without blur the translucency just shows a smeared
+# wallpaper; with it, it becomes frosted glass. Windows here are opaque, so
+# blurring them would cost GPU time for no visible change.
+#
+# No corner_radius here either. It clips the layer-shell surface itself, which
+# is separate from the CSS: leaving it at 14 while style.css was square kept
+# the bar visually rounded anyway, through the clip rather than the paint.
+layer_effects "waybar" {
+    blur enable;
+    blur_ignore_transparent enable;
+    shadows enable;
+}
 
 ### Autostart
 exec waybar
