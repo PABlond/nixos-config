@@ -1,0 +1,166 @@
+// Waybar. Catppuccin Mocha palette, matching the client.* colours in the
+// sway config, with a floating rounded bar in the macOS vein to go with
+// WhiteSur-Dark. Glyphs come from Hack Nerd Font (see modules/fonts.nix).
+//
+// Reload after editing, without a rebuild:
+//     killall -SIGUSR2 waybar
+//
+// Module choices that are specific to this machine rather than generic:
+//
+//   sway/window   the sway config sets `default_border pixel 2`, so windows
+//                 have no titlebars at all -- this bar is now the only place
+//                 the focused window's title appears.
+//   disk          a full root filesystem silently corrupted the Windows VM's
+//                 config twice (13 and 16 Nov 2026, both ENOSPC during a
+//                 VirtualBox write). This is here to make that visible before
+//                 it happens, which is why it is the leftmost of the right
+//                 group and turns red early.
+//   temperature   k10temp, via the stable PCI device path. `/sys/class/hwmon/
+//                 hwmonN` is NOT stable across boots; hwmon-path-abs is.
+//   custom/gpu    an RTX 2080 lives here and gets used by Lutris; nvidia-smi
+//                 is the only way to read it.
+//   pulseaudio    the default sink is a Focusrite Scarlett 2i2, so the label
+//                 is worth showing rather than assuming built-in audio.
+
+{
+  "layer": "top",
+  "position": "top",
+  "height": 34,
+  // These three MUST equal `gaps inner` in dotfiles/sway/config (7).
+  //
+  // That is the whole alignment: sway applies its inner gap at the workspace
+  // edges too, so every window sits 7px from the screen border. A bar with
+  // different margins is visibly off by the difference -- it was 8 here, and
+  // the 1px-per-side mismatch was obvious against a full-width window.
+  //
+  // Vertically it chains: the bar reserves margin-top + height, and the
+  // workspace below it starts after another 7px gap. 7 + 34 = 41 reserved,
+  // window top at 48, so the spacing above the bar, below the bar and at the
+  // sides is 7 everywhere.
+  "margin-top": 7,
+  "margin-left": 7,
+  "margin-right": 7,
+  "spacing": 0,
+
+  "modules-left": ["sway/workspaces", "sway/mode", "sway/window"],
+  "modules-center": ["clock"],
+  "modules-right": [
+    "disk",
+    "memory",
+    "cpu",
+    "temperature",
+    "custom/gpu",
+    "pulseaudio",
+    "network",
+    "tray"
+  ],
+
+  "sway/workspaces": {
+    "disable-scroll": false,
+    "format": "{name}",
+    // Workspaces live on a fixed output (1 on the bottom screen, 10 on the
+    // top), so each bar should only show its own -- not the other screen's.
+    "all-outputs": false
+  },
+
+  "sway/mode": {
+    "format": "󰘴 {}"
+  },
+
+  "sway/window": {
+    "format": "{title}",
+    "max-length": 70,
+    "separate-outputs": true,
+    // Trim the noisy suffixes the apps on this machine append, and prefix an
+    // icon instead. Matches are full-string regexes.
+    "rewrite": {
+      "(.*) — Mozilla Firefox": "󰈹  $1",
+      "(.*) - Brave": "󰖟  $1",
+      "(.*) - Visual Studio Code": "󰨞  $1",
+      "(.*) - Oracle VirtualBox": "󰾌  $1",
+      "alex@nixos:\\s*(.*)": "  $1"
+    }
+  },
+
+  "clock": {
+    "format": "{:%H:%M}",
+    "format-alt": "{:%A %d %B %Y}",
+    "tooltip-format": "<tt><small>{calendar}</small></tt>",
+    "calendar": {
+      "mode": "month",
+      "weeks-pos": "right",
+      "format": {
+        "months": "<span color='#cdd6f4'><b>{}</b></span>",
+        "days": "<span color='#bac2de'>{}</span>",
+        "weeks": "<span color='#74c7ec'><b>S{}</b></span>",
+        "weekdays": "<span color='#f9e2af'><b>{}</b></span>",
+        "today": "<span color='#89b4fa'><b><u>{}</u></b></span>"
+      }
+    }
+  },
+
+  "disk": {
+    "interval": 60,
+    "path": "/",
+    "format": "󰋊 {percentage_used}%",
+    "tooltip-format": "{used} utilisés sur {total} — {free} libres",
+    // 92% has already been reached on this machine. Warn long before full.
+    "states": { "warning": 85, "critical": 93 }
+  },
+
+  "memory": {
+    "interval": 5,
+    "format": "󰍛 {percentage}%",
+    "tooltip-format": "{used:0.1f} Gio sur {total:0.1f} Gio",
+    "states": { "warning": 80, "critical": 92 }
+  },
+
+  "cpu": {
+    "interval": 5,
+    "format": "󰻠 {usage}%",
+    "states": { "warning": 70, "critical": 90 }
+  },
+
+  "temperature": {
+    // k10temp (Tctl) through the device path, not /sys/class/hwmon/hwmonN,
+    // which is renumbered at boot. The waybar man page uses this very path
+    // as its example.
+    "hwmon-path-abs": "/sys/devices/pci0000:00/0000:00:18.3/hwmon",
+    "input-filename": "temp1_input",
+    "interval": 5,
+    "format": " {temperatureC}°",
+    "critical-threshold": 85,
+    "format-critical": " {temperatureC}°"
+  },
+
+  "custom/gpu": {
+    "exec": "nvidia-smi --query-gpu=temperature.gpu,utilization.gpu --format=csv,noheader,nounits | awk -F', ' '{printf \"󰢮 %s° %s%%\", $1, $2}'",
+    "interval": 10,
+    "tooltip": false
+  },
+
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰝟 muet",
+    "format-icons": { "default": ["󰕿", "󰖀", "󰕾"] },
+    "tooltip-format": "{desc} — {volume}%",
+    "scroll-step": 5,
+    "on-click": "pavucontrol",
+    "on-click-right": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+  },
+
+  "network": {
+    // Pinned to the wifi interface: this host also has docker0, two docker
+    // bridges, vboxnet0 and tailscale0, and waybar would happily pick one.
+    "interface": "wlp11s0f3u4",
+    "format-wifi": "󰤨 {essid}",
+    "format-disconnected": "󰤭 hors ligne",
+    "tooltip-format": "{essid} — {signalStrength}% — {ipaddr}",
+    "on-click": "nm-connection-editor"
+  },
+
+  "tray": {
+    "icon-size": 16,
+    "spacing": 10
+  }
+}
