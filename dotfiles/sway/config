@@ -72,6 +72,16 @@ tiling_drag enable
 gaps inner 7
 smart_gaps on
 
+# No titlebars, just a 2px border. In a tiling layout the title says little
+# and costs a row on every window; the client.* colours at the bottom still
+# mark the focused window, through the border instead of the bar.
+#
+# Side effect: the `font` line above now only affects swaynag. Floating
+# windows keep their titlebars -- add `default_floating_border pixel 2` to
+# drop those as well, at the cost of having nothing to drag them by except
+# $mod + mouse.
+default_border pixel 2
+
 ### Autostart
 exec waybar
 exec mako
@@ -79,13 +89,19 @@ exec nm-applet --indicator
 exec udiskie --tray
 exec lxqt-policykit-agent
 
-# Lock after 10 min, screens off after 15, and lock before suspend. This is
-# what xss-lock + i3lock + `xset s off -dpms` used to cover between them.
-exec swayidle -w \
-    timeout 600  'swaylock -f' \
-    timeout 900  'swaymsg "output * dpms off"' \
-    resume       'swaymsg "output * dpms on"' \
-    before-sleep 'swaylock -f'
+# No idle handling at all. Deliberately.
+#
+# There was a swayidle here (lock at 10 min, screens off at 15), added during
+# the migration as the equivalent of xss-lock + i3lock. It was wrong: the Arch
+# config did the opposite -- `xset s off -dpms` disabled blanking outright, and
+# xss-lock only ever fired before a suspend, which this desktop never does.
+#
+# Nothing else blanks the screen: sway has no built-in idle timer, DPMS is only
+# ever driven by swayidle, and logind's IdleAction is NixOS's default (ignore).
+# So removing this line is the whole fix -- there is no system-level setting
+# left to chase.
+#
+# Locking is manual: $mod+Shift+X.
 
 ### Keys
 bindsym $mod+Return exec $term
